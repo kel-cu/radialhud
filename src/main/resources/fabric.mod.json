@@ -1,38 +1,30 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "radialhud",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Radial Hud",
+  "description": "Display your hotbar as a circle. Similar to GTA's HUD.",
   "authors": [
-    "Me!"
+    "Cloudburst"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/AntiCope/radialhud"
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/radialhud/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
-    "main": [
-      "net.fabricmc.example.ExampleMod"
+    "client": [
+      "anticope.radialhud.RadialHud"
     ]
   },
-  "mixins": [
-    "modid.mixins.json"
-  ],
-
+  "mixins": [],
   "depends": {
-    "fabricloader": ">=0.14.6",
     "fabric": "*",
-    "minecraft": "~1.19",
+    "minecraft": "~${mc_version}",
     "java": ">=17"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }
