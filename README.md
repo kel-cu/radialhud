@@ -1,9 +1,7 @@
-# Fabric Example Mod
+## RadialHUD
+Display your hotbar as a circle. Similar to GTA's HUD.
 
-## Setup
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
 
-## License
+https://user-images.githubusercontent.com/18114966/179347674-23abcd19-04da-4632-b834-ab22db9e9f94.mp4
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
