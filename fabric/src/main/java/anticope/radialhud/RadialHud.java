@@ -25,7 +25,7 @@ public class RadialHud implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             var mc = MinecraftClient.getInstance();
             if (openHudKey.isPressed() && mc.currentScreen == null) {
-                mc.setScreen(new RadialScreen());
+                mc.setScreen(new RadialScreen(openHudKey));
             }
         });
     }

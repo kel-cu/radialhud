@@ -15,16 +15,19 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.util.math.MathHelper;
 
 public class RadialScreen extends Screen {
 
     private int crosshairX, crosshairY, focusedSlot, prevFocusedSlot = -1;
     private float yaw, pitch;
+    private final KeyBinding key;
     private final static Identifier WIDGETS_TEXTURE = new Identifier("textures/gui/widgets.png");
 
-    public RadialScreen() {
+    public RadialScreen(KeyBinding key) {
         super(MutableText.of(new TranslatableTextContent("screen.radialhud.name")));
+        this.key = key;
     }
     
     private void cursorMode(int mode) {
@@ -43,7 +46,7 @@ public class RadialScreen extends Screen {
 
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        if (!RadialHud.openHudKey.isPressed())
+        if (!key.isPressed())
             close();
 
         return super.keyPressed(keyCode, scanCode, modifiers);
