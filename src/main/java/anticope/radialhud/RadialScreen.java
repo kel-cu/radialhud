@@ -10,6 +10,8 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
@@ -17,7 +19,7 @@ import net.minecraft.util.math.MathHelper;
 
 public class RadialScreen extends Screen {
 
-    private int crosshairX, crosshairY, focusedSlot = -1;
+    private int crosshairX, crosshairY, focusedSlot, prevFocusedSlot = -1;
     private float yaw, pitch;
     private final static Identifier WIDGETS_TEXTURE = new Identifier("textures/gui/widgets.png");
 
@@ -45,6 +47,18 @@ public class RadialScreen extends Screen {
             close();
 
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public void tick() {
+        if (focusedSlot == prevFocusedSlot) return;
+
+        var diff = Math.abs(focusedSlot - prevFocusedSlot);
+        if (diff >= PlayerInventory.getHotbarSize() - 1) diff = 1;
+        var pitch = 1F + (float)diff/(float)PlayerInventory.getHotbarSize();
+
+        client.world.playSoundFromEntity(client.player, client.player, SoundEvents.UI_BUTTON_CLICK, SoundCategory.MASTER, 0.2F, pitch);
+        prevFocusedSlot = focusedSlot;
     }
 
     @Override
