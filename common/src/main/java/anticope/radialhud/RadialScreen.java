@@ -3,6 +3,10 @@ package anticope.radialhud;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.minecraft.client.gl.ShaderProgramKeys;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 import net.minecraft.client.gui.screen.Screen;
@@ -23,10 +27,10 @@ public class RadialScreen extends Screen {
     private int crosshairX, crosshairY, focusedSlot, prevFocusedSlot = -1;
     private float yaw, pitch;
     private final KeyBinding key;
-    private final static Identifier WIDGETS_TEXTURE = new Identifier("textures/gui/widgets.png");
+    private final static Identifier WIDGETS_TEXTURE = Identifier.of("textures/gui/sprites/hud/hotbar_selection.png");
 
     public RadialScreen(KeyBinding key) {
-        super(MutableText.of(new TranslatableTextContent("screen.radialhud.name")));
+        super(Text.translatable("screen.radialhud.name"));
         this.key = key;
     }
     
@@ -60,7 +64,7 @@ public class RadialScreen extends Screen {
         if (diff >= PlayerInventory.getHotbarSize() - 1) diff = 1;
         var pitch = 1F + (float)diff/(float)PlayerInventory.getHotbarSize();
 
-        client.world.playSoundFromEntity(client.player, client.player, SoundEvents.UI_BUTTON_CLICK, SoundCategory.MASTER, 0.2F, pitch);
+        client.world.playSoundFromEntity(client.player, client.player, SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.MASTER, 0.2F, pitch);
         prevFocusedSlot = focusedSlot;
     }
 
@@ -74,11 +78,12 @@ public class RadialScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        drawTexture(matrices, GUI_ICONS_TEXTURE, crosshairX - 8, crosshairY - 8, 0, 0, 15, 15, true);
+    public void render(DrawContext matrices, int mouseX, int mouseY, float delta) {
+        super.render(matrices, mouseX, mouseY, delta);
+        matrices.drawTexture(RenderLayer::getGuiTextured, Identifier.of("textures/gui/sprites/hud/crosshair.png"), crosshairX - 8, crosshairY - 8, 0, 0, 15, 15, 15, 15);
 
         drawItems(matrices, (int) (Math.min(height, width) / 2 * 0.5), mouseX, mouseY);
-        matrices.scale(2f, 2f, 1f);
+        matrices.getMatrices().scale(2f, 2f, 1f);
 
         int scale = client.options.getGuiScale().getValue();
         Vector2 mouse = new Vector2(mouseX, mouseY);
@@ -100,22 +105,21 @@ public class RadialScreen extends Screen {
 
         client.player.setYaw(yaw + cross.x / 3);
         client.player.setPitch(MathHelper.clamp(pitch + cross.y / 3, -90f, 90f));
-        super.render(matrices, mouseX, mouseY, delta);
     }
 
-    private void drawTexture(MatrixStack matrices, Identifier id, int x, int y, int u, int v, int w, int h, boolean invert) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, id);
-        RenderSystem.enableBlend();
-        if (invert)
-            RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR,
-                    GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE,
-                    GlStateManager.DstFactor.ZERO);
-        drawTexture(matrices, x, y, u, v, w, h);
-    }
+//    private void drawTexture(DrawContext matrices, Identifier id, int x, int y, int u, int v, int w, int h, boolean invert) {
+//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+//        RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+//        RenderSystem.setShaderTexture(0, id);
+//        RenderSystem.enableBlend();
+//        if (invert)
+//            RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR,
+//                    GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE,
+//                    GlStateManager.DstFactor.ZERO);
+//        drawTexture(matrices, x, y, u, v, w, h);
+//    }
 
-    private void drawItems(MatrixStack matrix, int radius, int mouseX, int mouseY) {
+    private void drawItems(DrawContext matrix, int radius, int mouseX, int mouseY) {
         double lowestDistance = Double.MAX_VALUE;
 
         var inventory = client.player.getInventory();
@@ -126,8 +130,7 @@ public class RadialScreen extends Screen {
             int y = (int) Math.round(radius * Math.sin(s) + height / 2) - 8;
             
             var stack = inventory.getStack(slot);
-            itemRenderer.renderGuiItemIcon(stack, x, y);
-            itemRenderer.renderGuiItemOverlay(textRenderer, stack, x, y);
+            matrix.drawItem(stack, x, y);
 
             if (Math.hypot(x - mouseX, y - mouseY) < lowestDistance) {
                 lowestDistance = Math.hypot(x - mouseX, y - mouseY);
@@ -138,8 +141,8 @@ public class RadialScreen extends Screen {
         double s = (double) focusedSlot / PlayerInventory.getHotbarSize() * 2 * Math.PI;
         int x = (int) Math.round(radius * Math.cos(s) + width / 2) - 8 - 4;
         int y = (int) Math.round(radius * Math.sin(s) + height / 2) - 8 - 4;
-        
-        drawTexture(matrix, WIDGETS_TEXTURE, x, y, 0, 22, 16 + 8, 16 + 8, false);
+
+        matrix.drawTexture(RenderLayer::getGuiTextured, WIDGETS_TEXTURE, x, y, 0, 0, 16 + 8, 16 + 8, 16 + 8, 16 + 8);
     }
 
     @Override
