@@ -1,23 +1,14 @@
 package anticope.radialhud;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.util.math.MathHelper;
@@ -80,7 +71,7 @@ public class RadialScreen extends Screen {
     @Override
     public void render(DrawContext matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
-        matrices.drawTexture(RenderLayer::getGuiTextured, Identifier.of("textures/gui/sprites/hud/crosshair.png"), crosshairX - 8, crosshairY - 8, 0, 0, 15, 15, 15, 15);
+        matrices.drawTexture(Identifier.of("textures/gui/sprites/hud/crosshair.png"), crosshairX - 8, crosshairY - 8, 0, 0, 15, 15, 15, 15);
 
         drawItems(matrices, (int) (Math.min(height, width) / 2 * 0.5), mouseX, mouseY);
         matrices.getMatrices().scale(2f, 2f, 1f);
@@ -142,7 +133,7 @@ public class RadialScreen extends Screen {
         int x = (int) Math.round(radius * Math.cos(s) + width / 2) - 8 - 4;
         int y = (int) Math.round(radius * Math.sin(s) + height / 2) - 8 - 4;
 
-        matrix.drawTexture(RenderLayer::getGuiTextured, WIDGETS_TEXTURE, x, y, 0, 0, 16 + 8, 16 + 8, 16 + 8, 16 + 8);
+        matrix.drawTexture(WIDGETS_TEXTURE, x, y, 0, 0, 16 + 8, 16 + 8, 16 + 8, 16 + 8);
     }
 
     @Override
